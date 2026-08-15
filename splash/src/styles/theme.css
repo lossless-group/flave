@@ -71,6 +71,23 @@
 
   /* ── Misregistration offset — doubled in vibrant ─────────────────── */
   --misreg-offset: 2px;
+
+  /* ── Compatibility aliases ──────────────────────────────────────────
+     The components and prose styles were lifted from lfm/splash, which
+     carries a slightly wider token vocabulary than this splash's scale.
+     An undefined custom property does not fall back — it resolves to
+     nothing and the declaration is dropped, silently. That is how the
+     header nav shipped with `gap: var(--space-5)` and no gap at all.
+
+     These aliases map lfm's names onto this identity's values rather than
+     rewriting every lifted component. Anything NEW should use the names
+     above; these exist so copied code behaves. Audit with:
+       grep -rhoE 'var\(--[a-z0-9_-]+' src/ | sed 's/var(//' | sort -u
+     against the definitions in this file. */
+  --space-5: 20px;
+  --space-10: 40px;
+  --radius-lg: var(--radius-md);       /* zero-radius identity: stay small */
+  --transition-fast: 120ms ease;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -106,6 +123,13 @@
   --color-misreg-b: var(--slate-400);
 
   --shadow-plate: 0 1px 0 0 var(--ink-600), 0 18px 40px -24px rgb(0 0 0 / 0.9);
+
+  /* aliases — see the compatibility block in :root */
+  --color-bg-code: var(--color-bg-soft);
+  --color-bg-elevated: var(--color-bg-raised);
+  --color-border-accent: var(--color-accent);
+  --color-text-faint: var(--color-text-dim);
+  --shadow-elevated: var(--shadow-plate);
   color-scheme: dark;
 }
 
@@ -134,6 +158,13 @@
   --color-misreg-b: var(--slate-400);
 
   --shadow-plate: 0 1px 0 0 var(--paper-300), 0 18px 40px -28px rgb(20 21 24 / 0.28);
+
+  /* aliases — see the compatibility block in :root */
+  --color-bg-code: var(--color-bg-soft);
+  --color-bg-elevated: var(--color-bg-raised);
+  --color-border-accent: var(--color-accent);
+  --color-text-faint: var(--color-text-dim);
+  --shadow-elevated: var(--shadow-plate);
   color-scheme: light;
 }
 
@@ -163,6 +194,13 @@
 
   --misreg-offset: 4px;
   --shadow-plate: 0 1px 0 0 #2c3138, 0 22px 52px -22px rgb(255 61 24 / 0.22);
+
+  /* aliases — see the compatibility block in :root */
+  --color-bg-code: var(--color-bg-soft);
+  --color-bg-elevated: var(--color-bg-raised);
+  --color-border-accent: var(--color-accent);
+  --color-text-faint: var(--color-text-dim);
+  --shadow-elevated: var(--shadow-plate);
   color-scheme: dark;
 }
 

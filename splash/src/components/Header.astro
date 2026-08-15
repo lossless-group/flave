@@ -8,7 +8,7 @@ const base = import.meta.env.BASE_URL;
   <div class="container site-header__inner">
     <a class="site-header__brand" href={base}>
       <span class="brand__mark" aria-hidden="true">¶</span>
-      <span class="brand__name">Lossless Flavored Markdown</span>
+      <span class="brand__name">flave</span>
       <span class="brand__short" aria-hidden="true">flave</span>
     </a>
     <nav class="site-header__nav" aria-label="Primary">
@@ -16,14 +16,7 @@ const base = import.meta.env.BASE_URL;
       <a href={`${base}changelog/`}>Changelog</a>
       <a href={`${base}context-v/`}>Context</a>
       <a href={`${base}search/`}>Search</a>
-      <a href="https://github.com/lossless-group/flave" target="_blank" rel="noopener">GitHub</a>
-      <a
-        href="https://github.com/lossless-group/lossless-flavored-markdown-package"
-        target="_blank"
-        rel="noopener"
-      >
-        GitHub
-      </a>
+      <a href="https://github.com/lossless-group/flave" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
     <div class="site-header__actions">
       <SearchBox compact />
@@ -89,19 +82,29 @@ const base = import.meta.env.BASE_URL;
   .site-header__nav {
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-6);
     margin-left: auto;
     font-size: 0.9rem;
   }
   .site-header__nav a {
     color: var(--color-text-soft);
+    text-decoration: none;
+    white-space: nowrap;
+    font-family: var(--font__mono);
+    font-size: 0.82rem;
+    letter-spacing: var(--tracking-mono);
   }
   .site-header__nav a:hover {
     color: var(--color-accent);
   }
 
+  @media (max-width: 1000px) {
+    .site-header__nav { gap: var(--space-4); font-size: 0.84rem; }
+  }
   @media (max-width: 860px) {
-    .site-header__nav { gap: var(--space-3); font-size: 0.84rem; }
+    .site-header__nav { gap: var(--space-3); }
+    /* Search and GitHub both have homes elsewhere — the search popover in the
+       actions area, GitHub in the footer — so they are the ones to drop. */
     .site-header__nav a:nth-child(n+4) { display: none; }
   }
 </style>
