@@ -30,7 +30,9 @@ export const STATIC_SEO = {
   siteName: 'flave',
 
   root: {
-    title: 'flave — a document that keeps its workings',
+    // No leading brand: MetaTags appends titleSuffix (' — flave') unless the
+    // title already ends with it, so a brand prefix here doubles it.
+    title: 'A document that keeps its workings',
     description:
       'An agent-native document format and editor. Publish a .flave and people see the conclusion; send the file itself and they get the evidence, the data and its sources, and the reasoning that produced it. Built on Lossless Flavored Markdown.',
   },
