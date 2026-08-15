@@ -372,7 +372,13 @@ a:hover {
 }
 
 /* Misregistration — the signature move. Display type only, h1/h2.
-   The pseudo-elements are decorative; screen readers never see them. */
+   The pseudo-elements are decorative; screen readers never see them.
+
+   The offset plates are OUTLINED, not solid. Solid copies behind solid text
+   read as a blur — the type looks out of focus rather than out of register.
+   A hairline stroke offset from crisp solid text reads as what it is: two
+   plates that didn't quite line up. Keep the stroke at 1px; thicker returns
+   to mush. */
 .misreg {
   position: relative;
   display: inline-block;
@@ -385,14 +391,29 @@ a:hover {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+  opacity: 0.85;
 }
 .misreg::before {
   color: var(--color-misreg-a);
+  -webkit-text-stroke-color: var(--color-misreg-a);
   transform: translate(calc(var(--misreg-offset) * -1), calc(var(--misreg-offset) * -0.5));
 }
 .misreg::after {
   color: var(--color-misreg-b);
+  -webkit-text-stroke-color: var(--color-misreg-b);
   transform: translate(var(--misreg-offset), calc(var(--misreg-offset) * 0.5));
+}
+
+/* Browsers without -webkit-text-stroke would render the plates as solid fills
+   and reintroduce the blur. Hide them instead — the headline is crisp either
+   way, it just loses the ornament. */
+@supports not (-webkit-text-stroke: 1px black) {
+  .misreg::before,
+  .misreg::after {
+    display: none;
+  }
 }
 
 /* Registration mark — corner crosshair. Ornament only. */

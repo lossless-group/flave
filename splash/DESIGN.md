@@ -92,7 +92,7 @@ as a recolor of its siblings.
 |---|---|---|---|
 | Default mode | dark | light | **dark** |
 | Type | Fraunces + Inter | Newsreader + Manrope | **Space Grotesk + Instrument Sans** |
-| Hero | centered, stacked CTAs | asymmetric, diagram-dominant | **strata stack — offset clearance planes** |
+| Hero | centered, stacked CTAs | asymmetric, diagram-dominant | **two acts: an incumbent-flip opener, then the strata stack** |
 | Card chrome | rounded glass + glow | hairline + printer's corner ticks | **ledger row, zero radius, clearance left-rule** |
 | Ornament | radial mesh + grid | paper grain + margin rule | **registration crosshairs + misregistered display type** |
 | Brand spine | cyan / aquamarine / plum | ink-violet / sienna / moss | **graphite / bone / vermilion + clearance ramp** |
@@ -162,13 +162,28 @@ by 2px in opposing directions, with the bone text on top. It reads as an
 almost-aligned print run — a professional artifact with a visible human error,
 which is precisely the tone.
 
+**The offset plates are outlined, not solid** — revised 2026-08-15 after the
+first solid version made h1 look out of focus rather than out of register.
+Solid copies behind solid text read as blur; a hairline stroke offset from
+crisp text reads as two plates that didn't quite line up. Keep the stroke at
+1px — thicker returns to mush.
+
 ```css
-.misreg { position: relative; }
 .misreg::before,
-.misreg::after { content: attr(data-text); position: absolute; inset: 0; }
-.misreg::before { color: var(--color-misreg-a); transform: translate(-2px, -1px); }
-.misreg::after  { color: var(--color-misreg-b); transform: translate(2px, 1px); }
+.misreg::after {
+  content: attr(data-text);
+  position: absolute; inset: 0; z-index: -1;
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;   /* outline, never fill */
+  opacity: 0.85;
+}
+.misreg::before { -webkit-text-stroke-color: var(--color-misreg-a); transform: translate(-2px, -1px); }
+.misreg::after  { -webkit-text-stroke-color: var(--color-misreg-b); transform: translate(2px, 1px); }
 ```
+
+Browsers without `-webkit-text-stroke` would fall back to solid fills and
+reintroduce the blur, so an `@supports not` block hides the plates entirely
+there. The headline stays crisp either way; it just loses the ornament.
 
 **Constraints:** h1 and h2 only, never body. Disabled under
 `prefers-reduced-motion` is not sufficient — it is static, so it stays; but it
@@ -195,7 +210,13 @@ list of them should scan like a manifest, but section gaps are generous.
 - **Clearance chip (`.chip--clearance`)** — mono, uppercase, letter-spaced, 2px
   radius, hairline border tinted to its level, background at 12% of the level
   color.
-- **Strata stack (`.strata`)** — the hero. Four offset planes, `z`-ordered,
+- **Flip slot (`.flip`)** — the opener. A fixed-height window with the
+  incumbent formats (Keynote, PowerPoint, Pages, Word, InDesign) rotating
+  behind it on a pure-CSS reel, underlined in accent so the slot reads as a
+  plate window rather than a glitch. Pinned to the first name under
+  `prefers-reduced-motion`; the animated stack is `aria-hidden` with an
+  `sr-only` list beside it so the sentence still parses aloud.
+- **Strata stack (`.strata`)** — the second act. Four offset planes, `z`-ordered,
   each carrying a clearance label at its exposed edge. Clicking a level's chip
   brings that plane forward and swaps the specimen text to what that audience
   sees. This is a live demonstration of the thesis, not an illustration of it.
