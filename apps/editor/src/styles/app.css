@@ -1,0 +1,113 @@
+/* Layout only. Every colour comes from theme.css — the two-tier token contract
+   at splash/DESIGN.md. Components never reference a Tier-1 name directly. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #app { height: 100%; margin: 0; }
+
+body {
+  background: var(--color-bg, #0e0f11);
+  color: var(--color-text, #ecedef);
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.shell { display: flex; flex-direction: column; height: 100%; }
+
+.menubar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border, #282c33);
+  background: var(--color-surface, #16181c);
+  flex: 0 0 auto;
+}
+.brand {
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-accent, #ff4d2e);
+}
+.menus { display: flex; gap: 0.25rem; }
+.menus button {
+  background: none;
+  border: 0;
+  padding: 0.25rem 0.6rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary, #6e747e);
+  cursor: not-allowed;
+}
+.toggle {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary, #a8adb6);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.panes {
+  display: grid;
+  grid-template-columns: 18rem 1fr 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.panes--two { grid-template-columns: 18rem 1fr; }
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--color-border, #282c33);
+}
+.pane:last-child { border-right: 0; }
+
+.pane__label {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-tertiary, #6e747e);
+  border-bottom: 1px solid var(--color-border, #282c33);
+}
+
+.placeholder {
+  padding: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--color-text-tertiary, #6e747e);
+}
+
+.cm-host { flex: 1 1 auto; overflow: auto; min-height: 0; }
+.cm-host :global(.cm-editor) { height: 100%; }
+.cm-host :global(.cm-scroller) { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.85rem; }
+
+.rendered {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+  padding: 1.5rem 2rem;
+  line-height: 1.6;
+}
+.rendered :global(table) { border-collapse: collapse; margin: 1rem 0; }
+.rendered :global(th), .rendered :global(td) {
+  border: 1px solid var(--color-border, #282c33);
+  padding: 0.35rem 0.7rem;
+  text-align: left;
+}
+.rendered :global(pre) {
+  background: var(--color-surface-raised, #1d2025);
+  padding: 0.9rem;
+  overflow-x: auto;
+}
+.rendered :global(.callout) {
+  border-left: 3px solid var(--color-accent, #ff4d2e);
+  background: var(--color-surface, #16181c);
+  padding: 0.9rem 1.1rem;
+  margin: 1rem 0;
+}
+.rendered :global(.callout__title) { margin: 0 0 0.5rem; font-weight: 700; }

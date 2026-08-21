@@ -7,8 +7,21 @@ authors:
   - Michael Staton
 augmented_with:
   - Claude Code on Claude Opus 5 (1M context)
-semantic_version: 0.0.0.1
-status: Draft
+semantic_version: 0.0.0.2
+status: Partially-Shipped
+date_first_published: 2026-08-20
+post_ship_note: >-
+  Shipped 2026-08-20 in one pass. Done-conditions 1, 2 and 4 are green; #3
+  (selecting a rendered element returns its source range) is asserted in markup
+  only — there is no selection surface until Phase 1's Compose pane, hence
+  Partially-Shipped rather than Shipped. Precondition 3 (owner sign-off on
+  §1.1's v0 slices) was NEVER met; implementation proceeded at the operator's
+  explicit instruction and sign-off remains outstanding. Measuring lfm falsified
+  part of this plan's own D-23 reasoning — see the correction in that section.
+  Toolchain cost two detours: Vite 8 + rolldown + Vitest 4 could not build a
+  Svelte SSR test (pinned back to Vite 7 / Vitest 3), and pnpm 11 silently skips
+  esbuild's postinstall without allowBuilds. One upstream defect found and
+  written up: [[LFM-Barrel-Imports-Node-Builtins]].
 spec_reference: "[[Master-Flave-An-Agent-Native-Document-Format-and-Publisher]]"
 tags:
   - Plan
@@ -215,7 +228,18 @@ So `lfm` already knows synthesized nodes are unmapped and treats it as normal.
 | Node class | Behaviour in Compose |
 |---|---|
 | Plain prose — paragraph, heading, list item, blockquote, table cell, and inline marks within them | **Directly editable.** An edit becomes a text patch on a source range — precisely `block.edit(ref, patch)` from §9.2, *"surgical, not rewrite"* |
-| Callouts, wikilinks, citations, link previews, heading blocks, **and every trigger-pack component** | **Selectable, not directly editable.** Selecting focuses the source range in the Source pane, or targets the block for the agent |
+| Callouts, wikilinks, citations, link previews, heading blocks — everything `lfm` **synthesizes** | **Selectable, not directly editable.** No source range exists to patch. Selecting targets the block for the agent |
+| Trigger-pack components (`:::metric-card`) | **Selectable, not directly editable — by choice, not by constraint.** See the correction below |
+
+> ⚠️ **Correction, 2026-08-20 — measured, and this plan was partly wrong.**
+> Written above: trigger-pack components have no source position. **They do.**
+> A user-defined directive is a plain `remark-directive` node and keeps its
+> range (`:::metric-card{…}` measured at `pos=0-54`); only `lfm`'s *synthesized*
+> nodes lose it (`> [!note]` measured at `pos=NONE`). So the select-not-edit
+> rule for components is not forced by the data — it is a **decision**, made for
+> the reason immediately below. Both facts are now standing tests in
+> `packages/render/test/render.test.ts`, so a future `lfm` release that changes
+> either one turns the suite red instead of rotting the premise quietly.
 
 **Keep this line even if position were free.** The alternative taxes the core
 feature: if a user can type inside a trigger-rendered component, every
@@ -270,6 +294,29 @@ audiences, the leak scan · `jj` · DuckDB and `sql` fences · figures · HTMX �
 Per §1.1, during Phase 0 the agent is Claude Code running in a terminal beside
 the editor. It writes trigger-packs into the project; the editor hot-reloads
 them. Almost no agent-integration work, and the loop is already real.
+
+## Remaining work (as of 2026-08-20)
+
+**Landed:** `@flave/render` with the recursive dispatcher, `Callout` and
+`CodeBlock`, the trigger-pack registry branch, source-offset stamping, a
+20-assertion fixture suite with the three nesting cases, `@flave/editor`
+(CodeMirror 6 + live render + source toggle + stubbed menu bar), `theme.css`
+copied from `splash/`, and `pnpm prove` covering rungs 0–2.
+
+**Outstanding:**
+
+1. **Owner sign-off on §1.1's v0 slices** — precondition 3, never met.
+2. **A codified browser drive.** The app builds and serves HTTP 200; no
+   click-path is named, so a human still has to look at it. Per the tree's
+   browser-drive pattern this belongs in the phase plan before implementation,
+   and it did not.
+3. **Done-condition 3, properly.** Source offsets are stamped and asserted in
+   markup; nothing selects yet. Closes with Phase 1's Compose pane.
+4. **Delete `apps/editor/src/node-builtin-stub.ts`** once `lfm` moves
+   `og-cache` behind a subpath — see [[LFM-Barrel-Imports-Node-Builtins]].
+5. **Wikilinks are absent from the corpus** because `lfm` gates them behind a
+   per-site resolver. Fine for now; the fixture set should say so out loud when
+   flave picks a resolution strategy.
 
 ## What comes next
 

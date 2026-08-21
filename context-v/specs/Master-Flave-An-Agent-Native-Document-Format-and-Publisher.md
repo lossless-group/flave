@@ -6,9 +6,14 @@ publish: true
 generated_with: Claude Code on Opus 5
 categories: Technical-Specification
 date_created: 2026-08-14
-date_modified: 2026-08-15
+date_modified: 2026-08-20
 lede: "The master spec. A package format (.flave) and an editor built on Lossless Flavored Markdown — a document that keeps its workings, publishes only what you choose, and is written in the languages agents already speak fluently."
-status: Draft — v0.1, pre-engineering-handoff
+status: Implementing
+implementation_note: >-
+  Phase 0 (the live render loop) landed 2026-08-20 — see
+  [[Phase-0-The-Live-Render-Loop]]. Status reflects reality: implementation has
+  begun. It does NOT indicate sign-off — §1.1's v0 slices remain unsigned by the
+  spec owner, and D-23 was resolved by the PM of record rather than the owner.
 category: Technical Specifications
 site_uuid: 8c41d7b2-59ae-4e0c-9b3d-1f7a2c6e8055
 tags: [Flave, Lossless-Flavored-Markdown, Desktop-Publishing, Document-Formats, Svelte, Agent-Native, Open-Specs]
