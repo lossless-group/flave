@@ -4,10 +4,11 @@
   import { codemirror, type Lang } from './codemirror';
   import FileTree from './FileTree.svelte';
   import MetricCard from './MetricCard.svelte';
+  import Badge from './Badge.svelte';
   import { workspaceFs, languageOf, isTheme, type FsNode } from './workspace-fs';
 
   // The trigger-pack registry. Adding syntax is this line plus a component.
-  const packs = { 'metric-card': MetricCard };
+  const packs = { 'metric-card': MetricCard, badge: Badge };
 
   const DEFAULT_DOC = 'content/welcome.md';
   const DEFAULT_THEME = 'themes/lossless.css';

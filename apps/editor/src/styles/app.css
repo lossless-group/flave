@@ -217,3 +217,44 @@ body {
   font-size: 0.72rem;
   color: var(--color-text-dim);
 }
+
+/* ── Heading blocks — lfm's `$$ eyebrow / ## heading / && subheading` ─────── */
+
+.rendered hgroup.heading-block { margin: var(--space-8) 0 var(--space-4); }
+.rendered hgroup.heading-block > :first-child { margin-top: 0; }
+
+.rendered .heading-block-eyebrow {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font__display);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+}
+.rendered hgroup.heading-block h1,
+.rendered hgroup.heading-block h2,
+.rendered hgroup.heading-block h3 { margin: 0; }
+
+.rendered .heading-block-subheading {
+  margin: var(--space-2) 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+/* ── Task lists ──────────────────────────────────────────────────────────── */
+
+.rendered li.task {
+  list-style: none;
+  margin-left: calc(var(--space-6) * -1);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.rendered li.task input[type='checkbox'] {
+  accent-color: var(--color-accent);
+  margin: 0;
+  flex: 0 0 auto;
+}
+.rendered li.task > p { margin: 0; }
+.rendered li.task[data-checked='true'] { color: var(--color-text-dim); }
