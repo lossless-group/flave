@@ -13,6 +13,7 @@ import { spawnSync } from 'node:child_process';
 
 const RUNGS = [
   { rung: 0, name: 'frontmatter parses', cmd: 'node', args: ['scripts/check-frontmatter.mjs'] },
+  { rung: 0, name: 'styles resolve', cmd: 'node', args: ['scripts/check-styles.mjs'] },
   { rung: 0, name: 'svelte-check + tsc', cmd: 'pnpm', args: ['exec', 'svelte-check', '--tsconfig', './tsconfig.json', '--output', 'human'] },
   { rung: 1, name: 'fixture suite', cmd: 'pnpm', args: ['exec', 'vitest', 'run'] },
   { rung: 2, name: 'editor builds', cmd: 'pnpm', args: ['--filter', '@flave/editor', 'build'] },

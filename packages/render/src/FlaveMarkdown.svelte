@@ -21,6 +21,7 @@
   import Self from './FlaveMarkdown.svelte';
   import Callout from './components/Callout.svelte';
   import CodeBlock from './components/CodeBlock.svelte';
+  import Table from './components/Table.svelte';
   import { srcAttrs } from './position';
   import type { Component } from 'svelte';
 
@@ -44,9 +45,6 @@
     isDirective && !isCallout ? packs[node?.name as string] : undefined,
   );
 
-  // mdast tables put the header in the first row.
-  const headRow = $derived(type === 'table' ? kids[0] : undefined);
-  const bodyRows = $derived(type === 'table' ? kids.slice(1) : []);
 </script>
 
 {#if type === 'root'}
@@ -112,26 +110,7 @@
   <br />
 
 {:else if type === 'table'}
-  <table {...srcAttrs(node)}>
-    {#if headRow}
-      <thead>
-        <tr>
-          {#each headRow.children ?? [] as cell}
-            <th>{#each cell.children ?? [] as c}<Self node={c} {packs} {data} />{/each}</th>
-          {/each}
-        </tr>
-      </thead>
-    {/if}
-    <tbody>
-      {#each bodyRows as row}
-        <tr>
-          {#each row.children ?? [] as cell}
-            <td>{#each cell.children ?? [] as c}<Self node={c} {packs} {data} />{/each}</td>
-          {/each}
-        </tr>
-      {/each}
-    </tbody>
-  </table>
+  <Table {node} {packs} {data} />
 
 {:else if type === 'html'}
   {@html node.value}

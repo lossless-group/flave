@@ -122,6 +122,15 @@
   --color-misreg-a: var(--vermilion-500);
   --color-misreg-b: var(--slate-400);
 
+  /* Callout tones — semantic STATE, distinct from the clearance ramp above.
+     Drawn from the same tier-1 raws so the palette does not grow, but kept as
+     their own names because a warning callout makes no claim about who may see
+     it. Mixing the two would make the clearance ramp unverifiable. */
+  --color-tone-neutral: var(--bone-500);
+  --color-tone-info: var(--slate-400);
+  --color-tone-warning: var(--amber-400);
+  --color-tone-danger: var(--vermilion-500);
+
   --shadow-plate: 0 1px 0 0 var(--ink-600), 0 18px 40px -24px rgb(0 0 0 / 0.9);
 
   /* aliases — see the compatibility block in :root */
@@ -157,6 +166,12 @@
   --color-misreg-a: var(--vermilion-500);
   --color-misreg-b: var(--slate-400);
 
+  /* Callout tones — light mode. Darker stops so contrast holds on paper. */
+  --color-tone-neutral: #7b7f88;
+  --color-tone-info: var(--slate-600);
+  --color-tone-warning: var(--amber-600);
+  --color-tone-danger: var(--vermilion-700);
+
   --shadow-plate: 0 1px 0 0 var(--paper-300), 0 18px 40px -28px rgb(20 21 24 / 0.28);
 
   /* aliases — see the compatibility block in :root */
@@ -191,6 +206,12 @@
 
   --color-misreg-a: #ff3d18;
   --color-misreg-b: #43a9ff;
+
+  /* Callout tones — vibrant. Hotter stops to match the mode's higher energy. */
+  --color-tone-neutral: #767d88;
+  --color-tone-info: #43a9ff;
+  --color-tone-warning: #ffb43d;
+  --color-tone-danger: #ff3d18;
 
   --misreg-offset: 4px;
   --shadow-plate: 0 1px 0 0 #2c3138, 0 22px 52px -22px rgb(255 61 24 / 0.22);

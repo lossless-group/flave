@@ -18,20 +18,20 @@
     flex-direction: column;
     gap: 0.15rem;
     padding: 0.9rem 1.2rem;
-    border: 1px solid var(--color-border-strong, #3a3f48);
-    border-left: 3px solid var(--color-accent, #ff4d2e);
-    background: var(--color-surface, #16181c);
+    border: 1px solid var(--color-border-strong);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-bg-raised);
   }
   .metric-card__value {
     font-size: 1.75rem;
     font-weight: 700;
     line-height: 1;
-    color: var(--color-text, #ecedef);
+    color: var(--color-text);
   }
   .metric-card__label {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--color-text-tertiary, #6e747e);
+    color: var(--color-text-dim);
   }
 </style>

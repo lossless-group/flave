@@ -7,9 +7,9 @@ description: >-
   itself. Print-registration ornament and a deliberate misregistration on
   display type give it the creative edge; the grid, the hairlines, and the
   ledger rows keep it professional.
-version: 0.1.0.0
+version: 0.1.1.0
 date_created: 2026-08-15
-date_modified: 2026-08-15
+date_modified: 2026-08-20
 authors:
   - Michael Staton
 augmented_with:
@@ -38,6 +38,14 @@ colors:
   clearance-team: "#4C9BE8"      # slate blue — internal circulation
   clearance-lp: "#E0A33C"        # amber — shared under care
   clearance-public: "#FF4D2E"    # vermilion — fully exposed
+
+  # ── Callout tones — semantic STATE, deliberately NOT the clearance ramp ──
+  # Same tier-1 raws, different names. A warning callout makes no claim about
+  # who may see it; fusing the two would make the clearance ramp unverifiable.
+  tone-neutral: "#6E747E"        # graphite — unknown or untyped callout
+  tone-info: "#4C9BE8"           # slate — note / tip / abstract / question
+  tone-warning: "#E0A33C"        # amber — warning / caution / attention
+  tone-danger: "#FF4D2E"         # vermilion — danger / error / bug / failure
 
 typography:
   display: "'Space Grotesk', system-ui, sans-serif"
@@ -117,6 +125,7 @@ Components reference `--color-text`, never `--bone-100`.
 --color-text / --color-text-soft / --color-text-dim
 --color-accent / --color-accent-soft
 --color-clearance-private | -team | -lp | -public
+--color-tone-neutral | -info | -warning | -danger
 --color-misreg-a / --color-misreg-b   /* the two offset plates */
 ```
 
@@ -126,6 +135,31 @@ Components reference `--color-text`, never `--bone-100`.
 content."* Do not reach for amber because a card needs warmth. If a surface
 uses a clearance color, that surface is making a claim about who can see
 something. This is the one rule in this document worth enforcing in review.
+
+### Callout tones are state, and they are a different axis
+
+Added 2026-08-20, when the editor grew real `Callout` and `Table` components.
+
+Callouts needed semantic state colour and the palette had none — only the
+accent, the clearance ramp, and the misregistration pair. The tempting move was
+to reuse the ramp: amber is right there, and `> [!warning]` wants amber.
+
+**That would have been a mistake**, and the rule above says why. Clearance means
+*who may see this*. A warning callout makes no claim about visibility — a public
+document can carry a warning, and a private one can carry none. Two meanings on
+one token makes the clearance scan (§11.1 of the spec, the core promise)
+unverifiable, because you could no longer tell whether an amber rule meant
+"LP-visible" or "be careful."
+
+So `--color-tone-*` draws from the same tier-1 raws — the palette does not grow
+— under its own names. Four tones, not one per callout type, because **lfm's
+callout vocabulary is open**: it accepts any `[A-Za-z0-9_-]+`, so
+`> [!spaceship-status]` is valid input. Unknown types resolve to
+`tone-neutral` and keep their raw type on the element, so nothing is ever
+dropped — only its colour is defaulted.
+
+Tone is carried on a `data-callout-tone` attribute rather than a class, and
+paired with a marker bar so the distinction never rests on hue alone.
 
 ### Three modes
 
