@@ -26,3 +26,7 @@ __snapshots__/*.snap.new
 node_modules
 dist
 .vite
+
+# Rust / Tauri build output — hundreds of MB, never committed
+src-tauri/target/
+src-tauri/gen/

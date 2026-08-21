@@ -7,7 +7,7 @@ authors:
   - Michael Staton
 augmented_with:
   - Claude Code on Claude Opus 5 (1M context)
-semantic_version: 0.0.0.1
+semantic_version: 0.0.0.2
 status: Draft
 spec_reference: "[[Master-Flave-An-Agent-Native-Document-Format-and-Publisher]]"
 tags:
@@ -95,10 +95,16 @@ interface WorkspaceFs {
 }
 ```
 
-Dev-server bridge first (a Vite plugin over a real folder). The File System
-Access API and, later, Tauri are additional implementations of the same three
-methods. **Writing this interface before the first backend is the whole point** —
-D-26 stays open without blocking anything downstream of it.
+**Tauri is the first backend** (D-26). The filesystem is exposed as three
+explicit Rust commands rather than `tauri-plugin-fs`, because the plugin's
+capability scoping is a second permission model to keep in sync and what the app
+needs is exactly this contract, rooted at one folder. Every path is resolved
+against the root and rejected if it escapes — a traversal in a document can
+never reach outside the folder the user opened.
+
+A `MemoryFs` fallback keeps `pnpm dev` working in a plain browser. It is
+explicitly **not** persistent and says so in the UI, rather than pretending to
+save and losing the work.
 
 ### 2 · The Files surface
 
@@ -159,10 +165,12 @@ exists) · published theme packages and the registry (§5.5, D-18) · frames ·
 
 ## Open decisions
 
-| ID | Decision | Blocking? |
-|---|---|---|
-| **D-26** | Filesystem access mechanism before Tauri | Blocks step 1 only |
-| **D-27** | Four-column layout — stack, tab, or slide-over | Blocks step 2's shape, not its logic |
+Both closed by the owner on 2026-08-20, before implementation started:
+
+| ID | Resolution |
+|---|---|
+| **D-26** | Tauri, brought forward. Viability proven on NixOS first — webkit2gtk 2.52.5, gtk 3.24.52, libsoup 3.6.6, cargo 1.97 via a repo-local flake devshell — because "toolchain trouble generates more loops than logic ever does" and a Tauri build on NixOS is exactly where that bites |
+| **D-27** | The left rail toggles Chat ⇄ Files. One rail, two surfaces, never both |
 
 ## See also
 
