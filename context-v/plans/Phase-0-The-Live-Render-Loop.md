@@ -7,7 +7,7 @@ authors:
   - Michael Staton
 augmented_with:
   - Claude Code on Claude Opus 5 (1M context)
-semantic_version: 0.0.0.2
+semantic_version: 0.0.0.3
 status: Partially-Shipped
 date_first_published: 2026-08-20
 post_ship_note: >-
@@ -21,7 +21,11 @@ post_ship_note: >-
   Toolchain cost two detours: Vite 8 + rolldown + Vitest 4 could not build a
   Svelte SSR test (pinned back to Vite 7 / Vitest 3), and pnpm 11 silently skips
   esbuild's postinstall without allowBuilds. One upstream defect found and
-  written up: [[LFM-Barrel-Imports-Node-Builtins]].
+  written up: [[LFM-Barrel-Imports-Node-Builtins]]. Operator walk-through completed the same day:
+  the app was opened by a human, typed into, and confirmed working —
+  verdict "working but needs iteration". That closes the human rung; the
+  CODIFIED browser drive is still absent, and a one-time human confirmation
+  is not a regression test. Specific iteration items remain unnamed.
 spec_reference: "[[Master-Flave-An-Agent-Native-Document-Format-and-Publisher]]"
 tags:
   - Plan
@@ -306,10 +310,12 @@ copied from `splash/`, and `pnpm prove` covering rungs 0–2.
 **Outstanding:**
 
 1. **Owner sign-off on §1.1's v0 slices** — precondition 3, never met.
-2. **A codified browser drive.** The app builds and serves HTTP 200; no
-   click-path is named, so a human still has to look at it. Per the tree's
-   browser-drive pattern this belongs in the phase plan before implementation,
-   and it did not.
+2. **A codified browser drive.** ✅ *Human rung closed 2026-08-20 — the
+   operator opened the app and confirmed it works.* ❌ *Codified rung still
+   open* — no click-path is named or automated, so nothing catches a silent
+   break between two proof runs. Per the tree's browser-drive pattern the
+   click-path belongs in the phase plan **before** implementation, and it did
+   not; that sequencing mistake is the one worth not repeating in Phase 1.
 3. **Done-condition 3, properly.** Source offsets are stamped and asserted in
    markup; nothing selects yet. Closes with Phase 1's Compose pane.
 4. **Delete `apps/editor/src/node-builtin-stub.ts`** once `lfm` moves
