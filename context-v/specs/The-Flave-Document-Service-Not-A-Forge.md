@@ -109,7 +109,7 @@ constraint, not a nicety.
 Worth recording because the symmetry is the reusable part: *bucket + plain
 artifacts + a client-facing read surface + history on the operator side* is the
 identical conclusion reached independently for client corpora in
-`ai-labs/context-v/plans/Prove-The-Substrate-Before-Building-History.md`.
+`ai-labs/context-v/plans/Sync-Corpora-to-R2-and-Show-Clients-What-Changed.md`.
 
 Two products, one pattern. Per the standing no-shared-dependency rule across
 `ai-labs` apps, that means **write the pattern down once and copy it twice** —
@@ -155,7 +155,7 @@ edit a `.flave` and send it back.
 ## Related
 
 - [[Master-Flave-An-Agent-Native-Document-Format-and-Publisher]] — §5.1, §8.2, §8.4, §9.1, §11
-- `ai-labs/context-v/plans/Prove-The-Substrate-Before-Building-History.md` — the sibling conclusion and the structured change record
+- `ai-labs/context-v/plans/Sync-Corpora-to-R2-and-Show-Clients-What-Changed.md` — the sibling conclusion and the structured change record
 - `ai-labs/context-v/explorations/A-Syncbox-For-Client-Document-Folders.md` — the exploration behind both
 - `ai-labs/studies/sync-and-content-version-control/context-v/profiles/Profile__Jujutsu.md` — why a colocated repo does not travel whole
 - `ai-labs/studies/sync-and-content-version-control/context-v/profiles/Profile__Automerge.md` — what the Quip-feel tier actually costs
