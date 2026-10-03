@@ -42,12 +42,17 @@ Most of the master spec is **designed and parked**. The build order is deliberat
 
 **Parked:** the layout and frame system, `deck` and `paged` surfaces, the theme registry, Jujutsu integration, DuckDB and `sql` fences, figures, HTMX. All designed in the spec; none scheduled.
 
+## Run it
+
+Getting started guides, per OS, live in [`docs/getting-started/`](./docs/getting-started/) and on the splash under [Collaborate](https://lossless-group.github.io/flave/collaborate/). With Nix installed, `nix develop` (or `direnv allow`) gives you the whole toolchain; then `pnpm install && pnpm app:dev`.
+
 ## Repository layout
 
 | Path | Purpose |
 |---|---|
 | `context-v/` | Living documentation — the master spec, plus plans, blueprints, explorations as they appear |
 | `changelog/` | Ship log, per the Lossless changelog conventions |
+| `docs/` | Collaborator docs — getting started per OS. Rendered on the splash under **Collaborate** |
 | `splash/` | GitHub Pages splash (placeholder — see its README) |
 
 ## Relationship to the rest of the tree

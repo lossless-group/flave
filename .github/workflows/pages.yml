@@ -32,17 +32,23 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          # Newest release, not a pin. splash/pnpm-workspace.yaml's allowBuilds
+          # needs pnpm >= 10.26; older versions ignore it.
+          version: latest
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Newest LTS. Astro supports even-numbered Node only (>= 22.12), so
+          # this is "latest" without risking an odd-numbered Current release.
+          node-version: lts/*
           cache: pnpm
           cache-dependency-path: splash/pnpm-lock.yaml
 
       - name: Install
-        run: pnpm install --frozen-lockfile=false --ignore-workspace
+        # No --ignore-workspace: splash/ is its own pnpm root now, and that flag
+        # would make pnpm skip splash/pnpm-workspace.yaml (and its allowBuilds).
+        run: pnpm install --frozen-lockfile=false
 
       - name: Build
         run: pnpm build

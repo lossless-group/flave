@@ -61,6 +61,7 @@ const SPLASH_DIR = process.cwd();
 const PARENT_DIR = resolve(SPLASH_DIR, '..');
 const PARENT_CHANGELOG = resolve(PARENT_DIR, 'changelog');
 const PARENT_CONTEXT_V = resolve(PARENT_DIR, 'context-v');
+const PARENT_DOCS = resolve(PARENT_DIR, 'docs');
 
 interface LocalLoaderOptions {
   /** Absolute path to the parent content directory. */
@@ -216,6 +217,31 @@ const contextVSchema = z
   })
   .passthrough();
 
+// Collaborator docs (../docs). Rendered through LFM's parseMarkdown on the
+// /collaborate/ pages rather than Astro's built-in markdown, so the loader's
+// `rendered` output goes unused there — kept only so the shared loader stays
+// one shape.
+const docsSchema = z
+  .object({
+    ...provenanceFields,
+    title: lenientString,
+    lede: lenientString,
+    // Which Getting Started track a page belongs to: linux, macos, windows,
+    // nix. Absent = a general page.
+    os: lenientString,
+    order: lenientNumber,
+    status: lenientString,
+    date_created: lenientDate,
+    date_modified: lenientDate,
+    date_authored_initial_draft: lenientDate,
+    date_authored_current_draft: lenientDate,
+    publish: lenientBoolean,
+    authors: lenientStringArray,
+    augmented_with: lenientStringArray,
+    tags: lenientStringArray,
+  })
+  .passthrough();
+
 // ─── Curated collections (local to splash/) ───────────────────────────────
 
 const featureHighlights = defineCollection({
@@ -254,8 +280,18 @@ const contextV = defineCollection({
   schema: contextVSchema,
 });
 
+const docs = defineCollection({
+  loader: localLoader({
+    collectionName: 'docs',
+    dir: PARENT_DOCS,
+    provenance: 'flave',
+  }),
+  schema: docsSchema,
+});
+
 export const collections = {
   'feature-highlights': featureHighlights,
   changelog,
   'context-v': contextV,
+  docs,
 };

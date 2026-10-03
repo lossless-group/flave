@@ -42,6 +42,12 @@ export const STATIC_SEO = {
     description: 'What shipped, when, and why — entry-by-entry notes for flave.',
   },
 
+  collaborate: {
+    title: 'Collaborate',
+    description:
+      'Get flave running on your own machine: the toolchain, the system libraries the desktop shell needs, and the commands that prove it works.',
+  },
+
   contextV: {
     title: 'Context Vigilance',
     description:

@@ -1,0 +1,56 @@
+---
+// Callout — Astro port of packages/render/src/components/Callout.svelte.
+//
+// Children MUST recurse through AstroMarkdown, never toString(): that is what
+// lets a code block or a list live inside a callout, which the setup docs lean
+// on constantly ("if this fails, run this").
+import AstroMarkdown from './AstroMarkdown.astro';
+import { toneFor } from './tones';
+
+const { node } = Astro.props as { node: any };
+const type: string | undefined = node?.attributes?.type;
+const tone = toneFor(type);
+const title: string | undefined = node?.attributes?.title;
+const children: any[] = Array.isArray(node?.children) ? node.children : [];
+---
+
+<aside class="callout" data-callout-tone={tone} data-callout-type={type ?? ''}>
+  <div class="callout__marker" aria-hidden="true"></div>
+  <div class="callout__content">
+    {title && <p class="callout__title">{title}</p>}
+    <div class="callout__body">
+      {children.map((child) => <AstroMarkdown node={child} />)}
+    </div>
+  </div>
+</aside>
+
+<style>
+  .callout {
+    --tone: var(--color-tone-neutral);
+    display: grid;
+    grid-template-columns: 3px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  /* Tone rides an attribute, not a class, so an unknown type still lands
+     somewhere defined. */
+  .callout[data-callout-tone='info'] { --tone: var(--color-tone-info); }
+  .callout[data-callout-tone='warning'] { --tone: var(--color-tone-warning); }
+  .callout[data-callout-tone='danger'] { --tone: var(--color-tone-danger); }
+
+  .callout__marker { background: var(--tone); border-radius: var(--radius-sm); }
+  .callout__content { min-width: 0; }
+  .callout__title {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font__display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    color: var(--tone);
+  }
+  .callout__body :global(> :first-child) { margin-top: 0; }
+  .callout__body :global(> * + *) { margin-top: var(--space-3); }
+</style>

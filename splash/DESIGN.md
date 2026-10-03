@@ -64,6 +64,9 @@ rounded:
 spacing:
   base: "4px"
   rhythm: "geometric — 1 2 3 4 6 8 12 16 24 units"
+  container: "1180px"
+  container-narrow: "820px"
+  gutter: "clamp(20px, 5vw, 48px)"
 
 components:
   card: "ledger row — hairline top/bottom, 3px clearance-colored left rule, zero radius"
@@ -232,6 +235,11 @@ Rounded corners read as "app"; this should read as "artifact."
 Spacing is a geometric rhythm on a 4px base: `1 2 3 4 6 8 12 16 24`. Vertical
 rhythm between major sections is `--space-16` or `--space-24`; inside a card,
 never more than `--space-4`.
+
+Two widths: `.container` (1180px) for the home page and chrome, and
+`.container-narrow` (820px) for every reading surface — lists, entries, docs.
+Both carry a fluid side gutter, `--gutter`, so text never touches the viewport
+edge: 20px on a phone, up to 48px on a wide screen.
 
 Density is **dense-but-breathing**: ledger rows sit close together because a
 list of them should scan like a manifest, but section gaps are generous.

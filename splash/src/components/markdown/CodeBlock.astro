@@ -1,0 +1,72 @@
+---
+// Code fence. Monochrome on purpose: highlighting belongs upstream in the LFM
+// packages, not wired per-site (same stance as content-farm/splash).
+//
+// A `title="…"` in the fence meta becomes a caption, and every block gets a
+// copy button — these docs are mostly commands someone will paste into a
+// terminal, so the button is the feature, not decoration.
+export interface Props { language?: string; code: string; meta?: string }
+const { language, code, meta } = Astro.props as Props;
+const title = meta?.match(/title="([^"]*)"/)?.[1];
+const label = title ?? (language && language !== 'text' ? language : undefined);
+---
+
+<figure class="codeblock">
+  <figcaption class="codeblock__bar">
+    <span class="codeblock__label">{label ?? ''}</span>
+    <button type="button" class="codeblock__copy" data-copy>Copy</button>
+  </figcaption>
+  <pre><code>{code}</code></pre>
+</figure>
+
+<script>
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+    if (!btn) return;
+    const code = btn.closest('.codeblock')?.querySelector('code')?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied';
+    } catch {
+      btn.textContent = 'Select & copy';
+    }
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+  });
+</script>
+
+<style>
+  .codeblock {
+    margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-code);
+    overflow: hidden;
+  }
+  .codeblock__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font__mono);
+    font-size: 0.72rem;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-text-dim);
+  }
+  .codeblock__copy {
+    font: inherit;
+    color: var(--color-text-soft);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 2px var(--space-2);
+    cursor: pointer;
+  }
+  .codeblock__copy:hover { color: var(--color-accent); border-color: var(--color-border-accent); }
+  .codeblock pre {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+</style>

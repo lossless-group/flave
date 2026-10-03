@@ -15,6 +15,7 @@ const base = import.meta.env.BASE_URL;
       <a href={`${base}#features`}>Features</a>
       <a href={`${base}changelog/`}>Changelog</a>
       <a href={`${base}context-v/`}>Context</a>
+      <a href={`${base}collaborate/`}>Collaborate</a>
       <a href={`${base}search/`}>Search</a>
       <a href="https://github.com/lossless-group/flave" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
@@ -104,7 +105,12 @@ const base = import.meta.env.BASE_URL;
   @media (max-width: 860px) {
     .site-header__nav { gap: var(--space-3); }
     /* Search and GitHub both have homes elsewhere — the search popover in the
-       actions area, GitHub in the footer — so they are the ones to drop. */
-    .site-header__nav a:nth-child(n+4) { display: none; }
+       actions area, GitHub in the footer — so they are the ones to drop.
+       Collaborate (4th) survives: it is the page a newcomer is sent to. */
+    .site-header__nav a:nth-child(n+5) { display: none; }
+  }
+  @media (max-width: 560px) {
+    /* Phone width: keep the two pages people are sent to directly. */
+    .site-header__nav a:not(:nth-child(4)):not(:nth-child(2)) { display: none; }
   }
 </style>

@@ -30,3 +30,6 @@ dist
 # Rust / Tauri build output — hundreds of MB, never committed
 src-tauri/target/
 src-tauri/gen/
+
+# direnv / nix-direnv cache
+.direnv/

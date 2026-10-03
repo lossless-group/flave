@@ -1,0 +1,105 @@
+---
+// AstroMarkdown — walks the MDAST that `parseMarkdown` from @lossless-group/lfm
+// returns and emits plain semantic HTML. Typography comes from prose.css; only
+// the LFM-specific nodes (callouts, code fences) get their own components.
+//
+// Lifted from content-farm/splash's walker and trimmed to what the docs use.
+// Unknown node types render their children rather than vanishing, so a newer
+// LFM node degrades to its text instead of a hole in the page.
+import type { Root, RootContent } from 'mdast';
+import Callout from './Callout.astro';
+import CodeBlock from './CodeBlock.astro';
+
+export interface Props { node: Root | RootContent }
+
+const { node } = Astro.props as Props;
+const n: any = node;
+const type: string = n?.type ?? 'root';
+const kids: any[] = Array.isArray(n?.children) ? n.children : [];
+
+const HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+const Heading = type === 'heading' ? HEADINGS[Math.min(Math.max(n.depth ?? 1, 1), 6) - 1] : 'h2';
+const List = n?.ordered ? 'ol' : 'ul';
+const isExternal = type === 'link' && /^https?:\/\//.test(n.url ?? '');
+
+const HANDLED = new Set([
+  'root', 'paragraph', 'text', 'strong', 'emphasis', 'delete', 'heading',
+  'list', 'listItem', 'link', 'image', 'code', 'inlineCode', 'blockquote',
+  'thematicBreak', 'table', 'tableRow', 'tableCell', 'html', 'break',
+  'containerDirective', 'leafDirective', 'textDirective', 'footnoteDefinition',
+]);
+---
+
+{type === 'root' && kids.map((c) => <Astro.self node={c} />)}
+{type === 'paragraph' && <p>{kids.map((c) => <Astro.self node={c} />)}</p>}
+{type === 'text' && n.value}
+{type === 'strong' && <strong>{kids.map((c) => <Astro.self node={c} />)}</strong>}
+{type === 'emphasis' && <em>{kids.map((c) => <Astro.self node={c} />)}</em>}
+{type === 'delete' && <del>{kids.map((c) => <Astro.self node={c} />)}</del>}
+{type === 'break' && <br />}
+{type === 'thematicBreak' && <hr />}
+{type === 'inlineCode' && <code>{n.value}</code>}
+{type === 'html' && <Fragment set:html={n.value} />}
+
+{/* LFM computes heading ids (remark-lfm-heading-ids); use them so the page's
+    "On this page" list, built from tree.data.headings, always matches. */}
+{type === 'heading' && <Heading id={n.data?.id}>{kids.map((c) => <Astro.self node={c} />)}</Heading>}
+
+{type === 'list' && <List start={n.ordered && n.start !== 1 ? n.start : undefined}>{kids.map((c) => <Astro.self node={c} />)}</List>}
+{type === 'listItem' && (
+  <li>
+    {/* Tight lists wrap each item in a paragraph; unwrap so items don't gain
+        paragraph margins. */}
+    {kids.map((c) =>
+      c.type === 'paragraph' && n.spread === false
+        ? c.children.map((cc: any) => <Astro.self node={cc} />)
+        : <Astro.self node={c} />
+    )}
+  </li>
+)}
+
+{type === 'link' && (
+  <a href={n.url} title={n.title ?? undefined} {...(isExternal ? { target: '_blank', rel: 'noopener' } : {})}>
+    {kids.map((c) => <Astro.self node={c} />)}
+  </a>
+)}
+{type === 'image' && <img src={n.url} alt={n.alt ?? ''} title={n.title ?? undefined} loading="lazy" />}
+
+{type === 'blockquote' && <blockquote>{kids.map((c) => <Astro.self node={c} />)}</blockquote>}
+{type === 'code' && <CodeBlock language={n.lang ?? undefined} code={n.value} meta={n.meta ?? undefined} />}
+
+{type === 'table' && (
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>{(kids[0]?.children ?? []).map((cell: any, i: number) => (
+          <th style={n.align?.[i] ? `text-align:${n.align[i]}` : undefined}>
+            {cell.children.map((c: any) => <Astro.self node={c} />)}
+          </th>
+        ))}</tr>
+      </thead>
+      <tbody>
+        {kids.slice(1).map((row: any) => (
+          <tr>{row.children.map((cell: any, i: number) => (
+            <td style={n.align?.[i] ? `text-align:${n.align[i]}` : undefined}>
+              {cell.children.map((c: any) => <Astro.self node={c} />)}
+            </td>
+          ))}</tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{(type === 'containerDirective' || type === 'leafDirective') && (
+  n.name === 'callout'
+    ? <Callout node={n} />
+    : <div data-directive={n.name}>{kids.map((c) => <Astro.self node={c} />)}</div>
+)}
+{type === 'textDirective' && <span data-directive={n.name}>{kids.map((c) => <Astro.self node={c} />)}</span>}
+
+{!HANDLED.has(type) && kids.map((c) => <Astro.self node={c} />)}
+
+<style>
+  .table-wrap { overflow-x: auto; }
+</style>

@@ -68,6 +68,9 @@
 
   --measure: 68ch;
   --container: 1180px;
+  --container-narrow: 820px;   /* reading pages: lists, entries, docs */
+  /* Side gutter: 20px on a phone, growing to 48px on a wide screen. */
+  --gutter: clamp(20px, 5vw, 48px);
 
   /* ── Misregistration offset — doubled in vibrant ─────────────────── */
   --misreg-offset: 2px;
@@ -307,12 +310,15 @@ a:hover {
   color: var(--color-on-accent);
 }
 
-.container {
+.container,
+.container-narrow {
   width: 100%;
   max-width: var(--container);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--gutter);
 }
+/* Was referenced by six pages and defined nowhere, so they ran edge to edge. */
+.container-narrow { max-width: calc(var(--container-narrow) + 2 * var(--gutter)); }
 
 /* ═══════════════════════════════════════════════════════════════════════
    Component primitives — the locked shapes, dressed for this splash

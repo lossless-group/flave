@@ -27,7 +27,11 @@
         ];
       in {
         devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ pkg-config rustc cargo nodejs_22 pnpm ];
+          # Unversioned attributes on purpose: `nodejs` tracks nixpkgs' newest LTS
+          # and `pnpm` its newest release. Floors, not pins — flave needs
+          # node >= 22.12 (Astro 6, Vite 7) and pnpm >= 10.26 (`allowBuilds`
+          # in pnpm-workspace.yaml). `nix flake update` moves everything forward.
+          nativeBuildInputs = with pkgs; [ pkg-config rustc cargo nodejs pnpm ];
           buildInputs = tauriDeps;
 
           shellHook = ''

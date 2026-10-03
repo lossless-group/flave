@@ -1,0 +1,177 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { STATIC_SEO } from '@lib/seo';
+
+const docs = (await getCollection('docs')).filter((d) => d.data.publish !== false);
+const byOs = (os: string) => docs.find((d) => d.data.os === os);
+
+// The Getting Started tracks, in the order a newcomer should scan them. A track
+// with no doc behind it still renders, marked unwritten — so the gap is visible
+// and someone on that OS knows to ask rather than assume.
+const tracks = [
+  { os: 'linux',   name: 'Linux',   detail: 'Ubuntu 22.04 / 24.04, and Debian-family distros', doc: byOs('linux') },
+  { os: 'nix',     name: 'Nix',     detail: 'Any Linux with Nix, NixOS included: one command, no apt', doc: byOs('nix') },
+  { os: 'macos',   name: 'macOS',   detail: 'Apple Silicon and Intel', doc: byOs('macos') },
+  { os: 'windows', name: 'Windows', detail: 'Native, or WSL2', doc: byOs('windows') },
+];
+
+const others = docs
+  .filter((d) => !d.data.os)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={STATIC_SEO.collaborate.title} description={STATIC_SEO.collaborate.description}>
+  <main class="page">
+    <div class="container-narrow">
+      <header class="page__header">
+        <p class="folio" data-num="§">Collaborate</p>
+        <h1>Run flave on your own machine</h1>
+        <p class="page__lede">
+          flave is pre-MVP: it works, on one person's laptop, and the point of this
+          section is to make that two. Pick your system below. Each guide starts from a
+          clean install and ends with the desktop app open in front of you.
+        </p>
+      </header>
+
+      <section aria-labelledby="gs">
+        <h2 id="gs" class="group__title">Getting Started</h2>
+        <ul class="tracks">
+          {tracks.map((t) => (
+            <li class="track" data-ready={t.doc ? 'true' : 'false'}>
+              {t.doc ? (
+                <a class="track__link" href={`${base}collaborate/${t.doc.id}/`}>
+                  <span class="track__name">{t.name}</span>
+                  <span class="track__detail">{t.detail}</span>
+                  <span class="track__state mono">Read the guide →</span>
+                </a>
+              ) : (
+                <div class="track__link">
+                  <span class="track__name">{t.name}</span>
+                  <span class="track__detail">{t.detail}</span>
+                  <span class="track__state mono">Not written yet</span>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p class="note">
+          On Ubuntu and have Nix too? Either guide works. The Nix one is shorter and touches
+          nothing outside the repo.
+        </p>
+      </section>
+
+      {others.length > 0 && (
+        <section aria-labelledby="more">
+          <h2 id="more" class="group__title">More</h2>
+          <ul class="tracks">
+            {others.map((d) => (
+              <li class="track" data-ready="true">
+                <a class="track__link" href={`${base}collaborate/${d.id}/`}>
+                  <span class="track__name">{d.data.title ?? d.id}</span>
+                  {d.data.lede && <span class="track__detail">{d.data.lede}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section aria-labelledby="how">
+        <h2 id="how" class="group__title">How we work</h2>
+        <ul class="how">
+          <li><strong>Branch from <code>development</code></strong>, and open PRs back into it. <code>main</code> and <code>master</code> are promotion tiers, not places to commit.</li>
+          <li><strong>Why things are the way they are</strong> lives in <a href={`${base}context-v/`}>Context</a>: the master spec, the phase plans, and every decision with its date and reasoning.</li>
+          <li><strong>What changed and when</strong> lives in the <a href={`${base}changelog/`}>Changelog</a>. Ship something, write an entry.</li>
+          <li><strong>Agents are expected.</strong> The repo is built to be co-authored with Claude Code, or any agent, running beside the editor.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .page { padding: var(--space-12) 0 var(--space-16); }
+  .page__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-12);
+  }
+  .page__header h1 {
+    font-size: clamp(2rem, 4.6vw, 2.8rem);
+    color: var(--color-text);
+    font-weight: 500;
+  }
+  .page__lede {
+    color: var(--color-text-soft);
+    font-size: 1.06rem;
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+
+  section + section { margin-top: var(--space-12); }
+  .group__title {
+    font-family: var(--font__mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Ledger rows, per DESIGN.md: zero radius, hairline rules, no cards. */
+  .tracks { list-style: none; margin: 0; padding: 0; }
+  .track__link {
+    display: grid;
+    grid-template-columns: 9rem 1fr auto;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    transition: padding-left var(--transition-fast);
+  }
+  a.track__link:hover { text-decoration: none; padding-left: var(--space-3); }
+  a.track__link:hover .track__state { color: var(--color-accent); }
+  .track__name {
+    font-family: var(--font__display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .track__detail { color: var(--color-text-soft); font-size: 0.95rem; }
+  .track__state { font-size: 0.78rem; color: var(--color-text-dim); white-space: nowrap; }
+  .track[data-ready='false'] .track__name,
+  .track[data-ready='false'] .track__detail { color: var(--color-text-faint); }
+  .track[data-ready='false'] .track__state { color: var(--color-text-faint); font-style: italic; }
+
+  @media (max-width: 640px) {
+    .track__link { grid-template-columns: 1fr; gap: var(--space-1); }
+  }
+
+  .note {
+    margin-top: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--color-text-dim);
+  }
+
+  .how { list-style: none; padding: 0; margin: var(--space-4) 0 0; }
+  .how li {
+    padding: var(--space-3) 0;
+    color: var(--color-text-soft);
+    line-height: 1.6;
+  }
+  .how strong { color: var(--color-text); }
+  .how a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .how code {
+    font-family: var(--font__mono);
+    font-size: 0.88em;
+    padding: 1px 5px;
+    background: var(--color-bg-code);
+    border: 1px solid var(--color-border);
+  }
+</style>

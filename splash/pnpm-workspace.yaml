@@ -1,0 +1,7 @@
+# The splash is its own pnpm root — deliberately not a member of flave's
+# workspace (../pnpm-workspace.yaml covers packages/* and apps/* only). This
+# file exists so pnpm stops at splash/ instead of walking up, and to carry the
+# build-script allowlist (pnpm >= 10.26 blocks unlisted postinstalls).
+allowBuilds:
+  esbuild: true   # places vite's platform binary
+  sharp: true     # astro's image service

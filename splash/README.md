@@ -13,7 +13,7 @@ flave publishes no packages yet, so the package-isolation discipline does not ap
 ## Local dev
 
 ```bash
-pnpm install --ignore-workspace   # required — the parent workspace excludes splash sites
+pnpm install                      # splash/ is its own pnpm root (see pnpm-workspace.yaml)
 pnpm dev                          # → http://localhost:4321/flave/
 ```
 
@@ -37,6 +37,7 @@ Dark is the default mode, per DESIGN.md §3. Light and vibrant are both complete
 |---|---|
 | `/changelog/` | `../changelog/*.md` — entries with `publish: true` |
 | `/context-v/` | `../context-v/**/*.md` — same filter |
+| `/collaborate/` | `../docs/**/*.md` — rendered through LFM's `parseMarkdown` (`src/components/markdown/`), not Astro's built-in markdown. `os:` frontmatter places a page on the Getting Started grid |
 | Home feature cells | `src/content/feature-highlights/*.md` — curated, one file per cell |
 | Home build-order rows | Hard-coded in `src/pages/index.astro` (`STAGES`) — it tracks the spec's §1.1 and changes rarely |
 

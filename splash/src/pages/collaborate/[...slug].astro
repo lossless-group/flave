@@ -1,0 +1,176 @@
+---
+import { getCollection } from 'astro:content';
+import { parseMarkdown } from '@lossless-group/lfm';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import AstroMarkdown from '@components/markdown/AstroMarkdown.astro';
+import { formatDate, toDate } from '@lib/date';
+import { STATIC_SEO } from '@lib/seo';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('docs');
+  return entries
+    .filter((e) => e.data.publish !== false)
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+
+// LFM, not Astro's built-in markdown: callouts (`> [!warning]` and
+// `:::callout`) arrive as real nodes, and headings carry LFM-computed ids that
+// the "On this page" rail below reads from the same tree.
+const tree = await parseMarkdown(entry.body ?? '');
+const toc = ((tree as any).data?.headings ?? []).filter((h: any) => h.depth === 2) as {
+  id: string;
+  text: string;
+}[];
+
+const modified = toDate(entry.data.date_modified ?? entry.data.date_authored_current_draft);
+const created = toDate(entry.data.date_created ?? entry.data.date_authored_initial_draft);
+const base = import.meta.env.BASE_URL;
+const title = entry.data.title ?? entry.id;
+---
+
+<BaseLayout
+  title={`${title} · ${STATIC_SEO.collaborate.title}`}
+  description={entry.data.lede ?? STATIC_SEO.collaborate.description}
+  ogType="article"
+  publishedTime={created?.toISOString()}
+  modifiedTime={modified?.toISOString()}
+  tags={entry.data.tags}
+>
+  <main class="doc" data-pagefind-body data-pagefind-meta={`title:${title}`}>
+    <span data-pagefind-filter="kind:Docs" hidden></span>
+    {entry.data.tags?.map((t) => <span data-pagefind-filter={`tag:${t}`} hidden></span>)}
+
+    <div class="container doc__grid">
+      <div class="doc__main">
+        <p class="doc__back mono" data-pagefind-ignore>
+          <a href={`${base}collaborate/`}>← Collaborate</a>
+          {entry.data.os && <span class="doc__crumb">/ getting started / {entry.data.os}</span>}
+        </p>
+
+        <header class="doc__header">
+          <div class="doc__meta mono" data-pagefind-ignore>
+            {modified && <time datetime={modified.toISOString()}>Updated {formatDate(modified)}</time>}
+            {entry.data.status && <span class="pill" data-status={entry.data.status}>{entry.data.status}</span>}
+          </div>
+          <h1>{title}</h1>
+          {entry.data.lede && <p class="doc__lede">{entry.data.lede}</p>}
+        </header>
+
+        <article class="prose doc__body">
+          <AstroMarkdown node={tree} />
+        </article>
+
+        <p class="doc__edit mono" data-pagefind-ignore>
+          Wrong or out of date?
+          <a href={`https://github.com/lossless-group/flave/edit/development/docs/${entry.data.from_path ?? `${entry.id}.md`}`} target="_blank" rel="noopener">
+            Edit this page on GitHub ↗
+          </a>
+        </p>
+      </div>
+
+      {toc.length > 2 && (
+        <nav class="doc__toc" aria-label="On this page" data-pagefind-ignore>
+          <p class="doc__toc-title">On this page</p>
+          <ol>
+            {toc.map((h) => <li><a href={`#${h.id}`}>{h.text}</a></li>)}
+          </ol>
+        </nav>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .doc { padding: var(--space-10) 0 var(--space-16); }
+  .doc__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+  @media (min-width: 1080px) {
+    .doc__grid { grid-template-columns: minmax(0, 68ch) 15rem; justify-content: center; }
+  }
+  .doc__main { min-width: 0; }
+
+  .doc__back {
+    font-size: 0.85rem;
+    margin-bottom: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .doc__back a { color: var(--color-text-dim); }
+  .doc__back a:hover { color: var(--color-accent); }
+  .doc__crumb { color: var(--color-text-faint); }
+
+  .doc__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .doc__meta {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+    font-size: 0.82rem;
+    color: var(--color-text-dim);
+  }
+  .doc__header h1 {
+    font-size: clamp(2rem, 4.4vw, 2.8rem);
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: -0.022em;
+  }
+  .doc__lede {
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--color-text-soft);
+    font-family: var(--font__display);
+    font-style: italic;
+    max-width: 60ch;
+  }
+
+  /* Headings need breathing room under the sticky 64px header when jumped to. */
+  .doc__body :global(h2), .doc__body :global(h3) { scroll-margin-top: 88px; }
+
+  .doc__edit {
+    margin-top: var(--space-16);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.82rem;
+    color: var(--color-text-dim);
+  }
+  .doc__edit a { color: var(--color-accent); }
+
+  .doc__toc { display: none; }
+  @media (min-width: 1080px) {
+    .doc__toc {
+      display: block;
+      position: sticky;
+      top: 96px;
+      align-self: start;
+      font-family: var(--font__mono);
+      font-size: 0.78rem;
+      border-left: 1px solid var(--color-border);
+      padding-left: var(--space-4);
+    }
+  }
+  .doc__toc-title {
+    color: var(--color-accent);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    margin-bottom: var(--space-3);
+  }
+  .doc__toc ol { list-style: none; padding: 0; margin: 0; counter-reset: toc; }
+  .doc__toc li { counter-increment: toc; }
+  .doc__toc li + li { margin-top: var(--space-2); }
+  .doc__toc a { color: var(--color-text-dim); line-height: 1.4; display: block; }
+  .doc__toc a::before { content: counter(toc, decimal-leading-zero) ' '; color: var(--color-text-faint); }
+  .doc__toc a:hover { color: var(--color-accent); text-decoration: none; }
+</style>
