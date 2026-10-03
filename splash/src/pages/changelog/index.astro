@@ -67,6 +67,7 @@ const base = import.meta.env.BASE_URL;
                   data-sort-created={created ? created.toISOString() : ''}
                   data-sort-published={published ? published.toISOString() : ''}
                   data-sort-title={title}
+                      data-sort-id={entry.id}
                 >
                   <a href={`${base}changelog/${entry.id}/`}>
                     <div class="entry-list__meta mono">

@@ -73,7 +73,11 @@ const {
 </div>
 
 <script define:vars={{ name, defaultKey, defaultDirection }}>
-  (() => {
+  // This component renders ABOVE the list it sorts, and define:vars makes the
+  // script inline, so it executes before the list exists. Wait for the parse;
+  // otherwise every lookup of the list's items comes back empty (which is why a
+  // remembered sort never re-applied on reload).
+  const init = () => {
     const root = document.querySelector(`.sort-controls[data-sort-name="${name}"]`);
     if (!root) return;
 
@@ -105,22 +109,40 @@ const {
       }
     }
 
+    // Same-day entries tie on every date key, so fall back to the entry id
+    // (changelog ids end in a per-day sequence: 2026-08-20_03). The tiebreak
+    // follows the chosen direction, so "Oldest first" really reverses a day.
+    function compare(a, b) {
+      const av = a.getAttribute(`data-sort-${key}`) || '';
+      const bv = b.getAttribute(`data-sort-${key}`) || '';
+      // Empty values always sink to the bottom regardless of direction.
+      if (!av && !bv) return 0;
+      if (!av) return 1;
+      if (!bv) return -1;
+      const cmp = av.localeCompare(bv) ||
+        (a.getAttribute('data-sort-id') || '').localeCompare(b.getAttribute('data-sort-id') || '');
+      return direction === 'desc' ? -cmp : cmp;
+    }
+
     function sortAll() {
-      const lists = document.querySelectorAll(`[data-sort-target="${name}"]`);
+      const lists = Array.from(document.querySelectorAll(`[data-sort-target="${name}"]`));
       lists.forEach((list) => {
-        const items = Array.from(list.children);
-        items.sort((a, b) => {
-          const av = a.getAttribute(`data-sort-${key}`) || '';
-          const bv = b.getAttribute(`data-sort-${key}`) || '';
-          // Empty values always sink to the bottom regardless of direction.
-          if (!av && !bv) return 0;
-          if (!av) return 1;
-          if (!bv) return -1;
-          const cmp = av.localeCompare(bv);
-          return direction === 'desc' ? -cmp : cmp;
-        });
+        const items = Array.from(list.children).sort(compare);
         items.forEach((item) => list.appendChild(item));
       });
+      // Grouped pages (context-v, by folder) would otherwise only reorder
+      // inside each group, which on a page of one-item groups looks like
+      // nothing happened. Order the groups by their now-first item.
+      const groups = lists.map((l) => l.closest('[data-sort-group]')).filter(Boolean);
+      const parent = groups[0]?.parentElement;
+      if (parent && groups.every((g) => g.parentElement === parent)) {
+        const anchor = groups[groups.length - 1].nextSibling;
+        groups
+          .map((g) => ({ g, first: g.querySelector('[data-sort-target]')?.firstElementChild }))
+          .filter((x) => x.first)
+          .sort((x, y) => compare(x.first, y.first))
+          .forEach(({ g }) => parent.insertBefore(g, anchor));
+      }
     }
 
     function persist() {
@@ -145,11 +167,30 @@ const {
       persist();
     });
 
-    // Apply persisted state on load. (Server pre-sorted by defaults; if the
-    // user picked something else last visit, reorder now.)
+    // Hide chips that cannot change anything: a key no entry carries (e.g.
+    // Published, until someone sets date_first_published), or one that orders
+    // the list exactly like a chip before it (changelog Created === Modified
+    // on every entry today). A dead chip reads as a broken sort. They return
+    // on their own once the data differs.
+    const allItems = Array.from(document.querySelectorAll(`[data-sort-target="${name}"] > *`));
+    const seen = new Set();
+    chips.forEach((c) => {
+      const values = allItems.map((i) => i.getAttribute(`data-sort-${c.dataset.sortKey}`) || '');
+      const signature = values.join('\u0000');
+      const dead = values.every((v) => !v) || seen.has(signature);
+      seen.add(signature);
+      c.hidden = dead;
+      if (dead && key === c.dataset.sortKey) key = defaultKey;
+    });
+
+    // Apply the sort on load: a remembered choice from last visit, and, on
+    // grouped pages, the group order (the server orders groups by folder, which
+    // would contradict a chip that says "Modified, newest first").
     paint();
-    if (key !== defaultKey || direction !== defaultDirection) sortAll();
-  })();
+    sortAll();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 </script>
 
 <style>
