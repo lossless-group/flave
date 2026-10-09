@@ -6,7 +6,7 @@
 
 `.flave` is a document format. **flave** is the editor over it. Both are built on [Lossless Flavored Markdown](https://jsr.io/@lossless-group/lfm).
 
-**Status: pre-implementation.** The master spec lives at [`context-v/specs/Master-Flave-An-Agent-Native-Document-Format-and-Publisher.md`](./context-v/specs/Master-Flave-An-Agent-Native-Document-Format-and-Publisher.md). Nothing is built yet.
+**Status: early build — a working desktop app.** flave opens a folder of documents, renders Lossless Flavored Markdown live as you type, lets you invent new syntax without touching the renderer, and restyles the document under your hands as you edit its theme. It runs as a Tauri desktop app on Linux, with getting-started docs for Ubuntu and Nix. The master spec lives at [`context-v/specs/Master-Flave-An-Agent-Native-Document-Format-and-Publisher.md`](./context-v/specs/Master-Flave-An-Agent-Native-Document-Format-and-Publisher.md); the [changelog](./changelog/) has the full story.
 
 ---
 
@@ -36,7 +36,15 @@ Clearance is monotonic and machine-checkable, which is what makes the promise pr
 
 Most of the master spec is **designed and parked**. The build order is deliberately small:
 
-**v0 — the editor.** A markdown editor where you choose how it renders, define your own syntax triggers, and see the output live as you type. CodeMirror 6, `lfm` for parsing, a Svelte renderer ported from `AstroMarkdown.astro`, one hand-edited `theme.css`. No Tauri, no frames, no themes-as-packages, no embedded agent — you run Claude Code beside it and it writes trigger components into the project.
+**v0 — the editor. Largely built.**
+
+- **The live render loop.** CodeMirror 6 on the left, the document on the right, rendered by `@flave/render`: one recursive dispatcher over the AST `lfm` produces, ported from `AstroMarkdown.astro`. Callouts, tables, heading blocks, task lists, and citations with a sources bibliography all render, nested ones included.
+- **Syntax you define.** A trigger-pack is a Svelte component plus one line of registration. `:::metric-card{value="42" label="ARR"}` renders as a component the renderer has never heard of, with zero edits to the renderer. You describe what you want, an agent writes the component, and the syntax exists.
+- **A desktop app over a workspace.** Tauri v2, brought forward from later in the plan because seeing the product on a real OS mattered more (D-26). It opens a folder, lists its files in a rail that toggles with Chat, and opens `.md`, `.css`, `.yaml`, and `.json` in the same source pane. File access is three narrow commands rooted at that folder, refusing any path that escapes it.
+- **The theme is a file you can open.** Click `themes/lossless.css`, change a value, and the document restyles as you type, with no reload. It saves to the workspace, so it is still there tomorrow and shared by every document in it.
+- **The demo document is the test.** `workspace/content/welcome.md` is what you see on first launch, and the suite renders that real file and asserts every feature it shows. A feature that stops rendering turns the suite red. `pnpm prove` answers "did we break the floor?" in about ten seconds.
+
+**Next:** one operation set with four callers (a menu, a palette, the rendered page, and an agent all writing through the same named operations), a folder picker, file watching, and CSS diagnostics while you type.
 
 **v1 — clearance and audiences.** Block-level clearance, named audiences, `flave publish --audience`, and the scan that proves nothing leaked. Small once v0 exists.
 
@@ -44,7 +52,7 @@ Most of the master spec is **designed and parked**. The build order is deliberat
 
 ## Run it
 
-Getting started guides, per OS, live in [`docs/getting-started/`](./docs/getting-started/) and on the splash under [Collaborate](https://lossless-group.github.io/flave/collaborate/). With Nix installed, `nix develop` (or `direnv allow`) gives you the whole toolchain; then `pnpm install && pnpm app:dev`.
+Getting started guides, per OS, live in [`docs/getting-started/`](./docs/getting-started/) and on the splash under [Collaborate](https://lossless-group.github.io/flave/collaborate/). With Nix installed, `nix develop` (or `direnv allow`) gives you the whole toolchain; then `pnpm install && pnpm app:dev` opens the desktop app. `pnpm test` runs the suite, and `pnpm prove` is the ten-second floor check.
 
 ## Repository layout
 
@@ -52,8 +60,14 @@ Getting started guides, per OS, live in [`docs/getting-started/`](./docs/getting
 |---|---|
 | `context-v/` | Living documentation — the master spec, plus plans, blueprints, explorations as they appear |
 | `changelog/` | Ship log, per the Lossless changelog conventions |
+| `apps/editor/` | `@flave/editor` — the Svelte editor UI: source pane, live document, Files and Chat rail |
+| `packages/render/` | `@flave/render` — the renderer over lfm's AST, and the trigger-pack registry |
+| `src-tauri/` | The Tauri v2 desktop shell, including the folder-rooted file commands |
+| `workspace/` | The seeded workspace the app opens: `content/welcome.md` (the demo, and a test fixture) and `themes/lossless.css` |
+| `scripts/` | `prove`, frontmatter, and style checks |
+| `flake.nix` | The Nix dev shell: the whole toolchain, including Tauri's system libraries |
 | `docs/` | Collaborator docs — getting started per OS. Rendered on the splash under **Collaborate** |
-| `splash/` | GitHub Pages splash (placeholder — see its README) |
+| `splash/` | GitHub Pages splash, live at [lossless-group.github.io/flave](https://lossless-group.github.io/flave/) |
 
 ## Relationship to the rest of the tree
 
