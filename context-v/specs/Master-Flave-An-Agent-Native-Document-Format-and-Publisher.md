@@ -39,6 +39,7 @@ image_prompt: "An open document that is simultaneously a stack of paper and a la
 hex_code: uzgr7l
 date_authored_initial_draft: 2026-08-15
 date_authored_current_draft: 2026-08-15
+type: Specs
 ---
 
 > [!warning] Reading order

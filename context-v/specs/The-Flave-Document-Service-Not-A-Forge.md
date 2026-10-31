@@ -31,6 +31,7 @@ tags:
   - Collaboration
   - Jujutsu
   - Client-Facing
+type: Specs
 ---
 
 # The Flave Document Service — Not a Forge

@@ -41,6 +41,7 @@ site_uuid: 459a637c-6cae-43fc-b6f5-655b992dae48
 hex_code: 8oxl62
 date_authored_initial_draft: 2026-08-20
 date_authored_current_draft: 2026-08-20
+type: Plans
 ---
 
 # Phase 0 — The Live Render Loop

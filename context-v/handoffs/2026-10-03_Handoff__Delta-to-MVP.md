@@ -29,6 +29,7 @@ tags:
   - Audiences
   - Clearance
   - Versioning
+type: Handoffs
 ---
 
 # Handoff — the delta to MVP

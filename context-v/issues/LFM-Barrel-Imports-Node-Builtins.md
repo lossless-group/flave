@@ -20,6 +20,7 @@ site_uuid: e8746326-f97c-4991-be23-9744503c0312
 hex_code: 5qsauj
 date_authored_initial_draft: 2026-08-20
 date_authored_current_draft: 2026-08-20
+type: Issues
 ---
 
 # The lfm barrel imports node builtins

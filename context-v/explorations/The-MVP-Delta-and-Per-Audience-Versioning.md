@@ -23,6 +23,7 @@ tags:
   - Clearance
   - Versioning
   - Gap-Analysis
+type: Explorations
 ---
 
 # The MVP Delta, and What "A Version Per Audience" Actually Requires
