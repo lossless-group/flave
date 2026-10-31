@@ -1,6 +1,6 @@
 ---
 title: "Flave — An Agent-Native Document Format and Desktop Publisher"
-version: 0.1.0.0
+at_semantic_version: 0.1.0.0
 date: 2026-08-15
 publish: true
 generated_with: Claude Code on Opus 5
