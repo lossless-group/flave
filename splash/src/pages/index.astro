@@ -21,6 +21,31 @@ const changelog = (await getCollection('changelog'))
   })
   .slice(0, 3);
 
+// The case for a format-aware sync, from the Flave Sync exploration.
+const SYNC_DOC = 'explorations/Flave-Sync-The-Product-Is-in-the-Sync-Layer';
+const WHY_NOT_DROPBOX = [
+  {
+    title: 'They corrupt version history',
+    body: 'Syncing a live .git or .jj folder through Dropbox, iCloud or Syncthing is a known way to break the repository.',
+  },
+  {
+    title: 'They sync your secrets',
+    body: 'They upload .secrets and .env along with everything else.',
+  },
+  {
+    title: "They can't tell versions apart",
+    body: "Two exports of the same document are just two folders. A flave sync knows they're one document, by the id in flave.yaml.",
+  },
+  {
+    title: 'Merging is all or nothing',
+    body: 'A collaborator\'s edit replaces your copy or produces a "conflicted copy" file.',
+  },
+  {
+    title: 'Sharing exposes raw files',
+    body: 'A share link shows the folder\'s files, not the finished deliverable.',
+  },
+];
+
 // The build order from the spec's §1.1. Deliberately shown, because a splash
 // for a pre-implementation project that hid its status would be exactly the
 // kind of overclaiming the product is against.
@@ -77,6 +102,38 @@ const STAGES = [
           ))
         }
       </ul>
+    </section>
+
+    <!-- ── Why not Dropbox ───────────────────────────────────────── -->
+    <section class="container band" id="sync">
+      <div class="section-head">
+        <h2>Why not just Dropbox or iCloud?</h2>
+        <p class="eyebrow">flave sync</p>
+      </div>
+
+      <p class="band__note">
+        Any chat that follows the flave instructions can hand you a <code class="tt">.flave</code>.
+        Keeping track of them afterwards is the hard part. Dropbox and iCloud can store a
+        <code class="tt">.flave</code> folder, but they don't understand it.
+      </p>
+
+      <ul class="grid">
+        {
+          WHY_NOT_DROPBOX.map((w) => (
+            <li class="cell">
+              <span class="regmark" style="top: -1px; right: -1px;" />
+              <h3 class="cell__title">{w.title}</h3>
+              <p class="cell__lede">{w.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="band__note band__note--after">
+        A flave sync can: every flave has an id, history moves through git, secrets never leave,
+        plain text merges line by line, and a link serves the rendered deliverable.
+        <a href={`${base}context-v/${SYNC_DOC}/`}>The full argument →</a>
+      </p>
     </section>
 
     <!-- ── Build order ───────────────────────────────────────────── -->
@@ -155,6 +212,10 @@ const STAGES = [
     max-width: var(--measure);
     color: var(--color-text-soft);
     margin-bottom: var(--space-8);
+  }
+
+  .band__note--after {
+    margin: var(--space-8) 0 0;
   }
 
   .tt {
