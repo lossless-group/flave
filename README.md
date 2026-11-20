@@ -44,7 +44,7 @@ Most of the master spec is **designed and parked**. The build order is deliberat
 - **The theme is a file you can open.** Click `themes/lossless.css`, change a value, and the document restyles as you type, with no reload. It saves to the workspace, so it is still there tomorrow and shared by every document in it.
 - **The demo document is the test.** `workspace/content/welcome.md` is what you see on first launch, and the suite renders that real file and asserts every feature it shows. A feature that stops rendering turns the suite red. `pnpm prove` answers "did we break the floor?" in about ten seconds.
 
-**Next:** one operation set with four callers (a menu, a palette, the rendered page, and an agent all writing through the same named operations), a folder picker, file watching, and CSS diagnostics while you type.
+**Next:** a folder picker, file watching so edits from any agent or tool re-render as they land, and CSS diagnostics while you type. There is no agent API to build: a flave is a folder of plain files, agents write them directly, and Jujutsu and git catch anything that goes wrong (spec §9.2, D-28).
 
 **v1 — clearance and audiences.** Block-level clearance, named audiences, `flave publish --audience`, and the scan that proves nothing leaked. Small once v0 exists.
 
